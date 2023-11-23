@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>service_user</artifactId>
+    <artifactId>service_hosp</artifactId>
     <packaging>war</packaging>
 
     <properties>
