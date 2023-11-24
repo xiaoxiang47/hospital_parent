@@ -3,12 +3,15 @@ package com.xiao.hospital.cmn.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xiao.hospital.cmn.listener.DictListener;
 import com.xiao.hospital.cmn.mapper.DictMapper;
 import com.xiao.hospital.cmn.service.DictService;
 import com.xiao.hospital.model.cmn.Dict;
 import com.xiao.hospital.vo.cmn.DictEeVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,6 +21,8 @@ import java.util.List;
 @Service
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
 
+    @Autowired
+    private DictMapper dictMapper;
 
     @Override
     public List<Dict> findChildrenData(Long id) {
@@ -57,6 +62,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         try {
             EasyExcel.write(response.getOutputStream(), DictEeVo.class).sheet("dict")
                     .doWrite(dictEeVos);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void importDictData(MultipartFile file) {
+        try {
+            EasyExcel.read(file.getInputStream(), DictEeVo.class, new DictListener(dictMapper)).sheet().doRead();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
