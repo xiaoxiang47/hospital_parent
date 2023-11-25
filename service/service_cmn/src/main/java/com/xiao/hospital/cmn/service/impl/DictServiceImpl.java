@@ -10,6 +10,8 @@ import com.xiao.hospital.model.cmn.Dict;
 import com.xiao.hospital.vo.cmn.DictEeVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     private DictMapper dictMapper;
 
     @Override
+    @Cacheable(value = "dict", keyGenerator = "keyGenerator")
     public List<Dict> findChildrenData(Long id) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.eq("parent_id", id);
@@ -39,6 +42,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
 
     //导出数据字典
+    @CacheEvict(value = "dict", allEntries = true)
     @Override
     public void exportDictData(HttpServletResponse response) {
         //设置下载信息
